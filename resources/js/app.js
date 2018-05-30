@@ -35,13 +35,25 @@ var UIController = (function () {
 // Global App Ctrl
 // controller  {receiving the other two module as argument}
 var controller = (function (budgetCtrl, UICtrl) {
+    var setupEventListeners = function () {
+        var DOM = UICtrl.getDOMstrings();
 
-    var DOM = UICtrl.getDOMstrings();
+        // eventListener on add button
+        document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem); // ctrlAddItem is a callBack fxn, no need of ()
+
+        // eventListener on keypress
+        document.addEventListener('keypress', function (event) {
+            if (event.keyCode === 13 || event.which === 13) {
+                ctrlAddItem();
+            }
+        });
+    };
+
 
     var ctrlAddItem = function () {
         // get the field input data from the private controller
         var input = UICtrl.getInput();
-        console.log(input);
+        // console.log(input); //show input object
 
 
         // add the item to the budget controller
@@ -50,23 +62,21 @@ var controller = (function (budgetCtrl, UICtrl) {
         // Display the budget on the UI
 
 
-    }
+    };
 
-    // eventListener on add button
-    document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem); // ctrlAddItem is a callBack fxn, no need of ()
-
-    // eventListener on keypress
-    document.addEventListener('keypress', function (event) {
-        if (event.keyCode === 13 || event.which === 13) {
-            ctrlAddItem();
+    // public init fxn to initialize an app
+    return {
+        init: function () {
+            console.log('App has started');
+            setupEventListeners();
         }
-    });
+    }
 
 
 })(budgetController, UIController);
 
-
-
+// starting the app
+controller.init();
 
 
 
