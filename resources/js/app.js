@@ -24,7 +24,42 @@ var budgetController = (function () {
             exp: 0,
             inc: 0
         }
-    }
+    };
+    // public exponsure, can be called by other modules
+    return {
+        addItem: function (type, des, val) {
+
+            var newItem;
+            // [1 2 3 4 5], next ID = 6
+            // [1 2 4 6 8], next ID = 9
+            // ID = last ID + 1
+            // // Create new unique ID
+
+            if (data.allItems[type].length > 0) {
+                // runs only when there's some thing in the array
+                ID = data.allItems[type][data.allItems[type].length - 1].id + 1;
+            } else {
+                //assign 0 to avoid -1
+                ID = 0;
+            }
+
+
+            // Create new item based on 'inc' or 'exp' type
+            if (type === 'exp') {
+                newItem = new Expense(ID, des, val);
+            } else if (type === 'inc') {
+                newItem = new Income(ID, des, val);
+            }
+
+            // pushi it into or data Structure 
+            data.allItems[type].push(newItem);
+            // return the new item
+            return newItem; //so that other module can have access to the newItem
+        },
+        testing: function () {
+            console.log(data);
+        }
+    };
 })();
 
 
@@ -73,15 +108,22 @@ var controller = (function (budgetCtrl, UICtrl) {
 
 
     var ctrlAddItem = function () {
-        // get the field input data from the private controller
-        var input = UICtrl.getInput();
+        // declare variables
+        var input, newItem;
+
+
+
+        // 1. get the field input data from the private controller
+        input = UICtrl.getInput();
         // console.log(input); //show input object
 
 
-        // add the item to the budget controller
-        // add the item to the UI
-        // calc the budget
-        // Display the budget on the UI
+        // 2. add the item to the budget controller
+        newItem = budgetCtrl.addItem(input.type, input.description, input.value); //this 'input' is from UICtrl
+        console.log(newItem);
+        // 3. add the item to the UI
+        // 4. calc the budget
+        // 5. Display the budget on the UI
 
 
     };
