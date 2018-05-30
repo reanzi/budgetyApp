@@ -14,6 +14,26 @@ var budgetController = (function () {
         this.description = description;
         this.value = value;
     };
+
+    // fxn to calc total depending on 'type' ; inc/exp
+    var calculateTotal = function (type) {
+        var sum = 0;
+
+        data.allItems[type].forEach(function (currentElement) {
+            sum += currentElement.value; // equal to [sum = sum + curEl.value]
+        });
+        // store to a total sorted by type
+        data.totals[type] = sum;
+
+        /*
+        sum = 0; initially
+        [100, 50, 220] , array to loop,
+        1st , loop[0:index], sum = 0 + 100; sum =100,
+        2nd , loop[1:index], sum = 100 + 50; sum =150,
+        3rd , loop[2:index], sum = 150 + 220; sum =370,
+        final sum = 370
+         */
+    };
     // Data structure
     var data = {
         allItems: {
@@ -23,7 +43,9 @@ var budgetController = (function () {
         totals: {
             exp: 0,
             inc: 0
-        }
+        },
+        budget: 0,
+        percentage: -1 // -1 means does not exist, hence it wont show %
     };
     // public exponsure, can be called by other modules
     return {
@@ -56,6 +78,29 @@ var budgetController = (function () {
             // return the new item
             return newItem; //so that other module can have access to the newItem
         },
+
+        calculateBudget: function () {
+            // 1. calc total income & expenses
+            calculateTotal('exp');
+            calculateTotal('inc');
+            // 2. calc the budget : inc - exp
+            data.budget = data.totals.inc - data.totals.exp;
+            // 3. calc the percentage of income that we spent
+            if (data.totals.inc > 0) {
+                data.percentage = Math.round((data.totals.exp / data.totals.inc) * 100);
+            } else {
+                data.percentage = -1;
+            }
+        },
+        getBudget: function () {
+            return {
+                budget: data.budget,
+                totalInc: data.totals.inc,
+                totalExp: data.totals.exp,
+                percentage: data.percentage
+            };
+        },
+
         testing: function () {
             console.log(data);
         }
@@ -145,11 +190,16 @@ var controller = (function (budgetCtrl, UICtrl) {
     };
 
     var updateBudget = function () {
+        var budget;
+
         // 1. calc the budget
+        budgetCtrl.calculateBudget();
 
         // 2. Return the budget
+        budget = budgetCtrl.getBudget();
 
         // 3. Display the budget on the UI
+        console.log(budget);
 
     };
 
