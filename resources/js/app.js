@@ -179,6 +179,11 @@ var UIController = (function () {
             document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
         },
 
+        deleteListItem: function (selectorID) {
+            var el = document.getElementById(selectorID);
+            el.parentNode.removeChild(el)
+        },
+
         clearFields: function () {
             var fields, fieldsArr;
             fields = document.querySelectorAll(DOMstrings.inputDescription + ', ' + DOMstrings.inputValue);
@@ -235,7 +240,7 @@ var controller = (function (budgetCtrl, UICtrl) {
         budgetCtrl.calculateBudget();
 
         // 2. Return the budget
-        budget = budgetCtrl.getBudget();
+        budget = budgetCtrl.getBudget(); // we just read the budget
 
         // 3. Display the budget on the UI
         UICtrl.displayBudget(budget);
@@ -284,11 +289,12 @@ var controller = (function (budgetCtrl, UICtrl) {
 
             // 1. delete the item from the data structure
             budgetCtrl.deleteItem(type, ID);
-            // console.log(ID);
 
             // 2. Delete the itme from the UI
+            UICtrl.deleteListItem(itemID);
 
             // 3. Update and show the new budget
+            updateBudget();
         }
     };
     // public init fxn to initialize an app
