@@ -79,6 +79,27 @@ var budgetController = (function () {
             return newItem; //so that other module can have access to the newItem
         },
 
+        deleteItem: function (type, id) {
+            var ids, index;
+            //id = 2
+            // data.allItems[type][3] // this can't be used
+            // ids = [1, 2, 6, 8]
+            // index = 3
+            // instead we'll create an array, hence index
+            ids = data.allItems[type].map(function (current) {
+                // map(), is just like 'forEach', except it return new array
+                return current.id;
+            });
+            index = ids.indexOf(id);
+            if (index !== -1) {
+                // splice is used to remove element
+                // split is used to create a copy
+                data.allItems[type].splice(index, 1);
+            }
+
+
+        },
+
         calculateBudget: function () {
             // 1. calc total income & expenses
             calculateTotal('exp');
@@ -257,9 +278,13 @@ var controller = (function (budgetCtrl, UICtrl) {
             //inc-1
             splitID = itemID.split('-');
             type = splitID[0];
-            ID = splitID[1];
+            ID = parseInt(splitID[1]);
+            // ID = splitID[1]; // returns a string {>> ID = parseInt(splitID[1]) <<}
+            // id = parseInt(ID); // convert string into integer
 
             // 1. delete the item from the data structure
+            budgetCtrl.deleteItem(type, ID);
+            // console.log(ID);
 
             // 2. Delete the itme from the UI
 
